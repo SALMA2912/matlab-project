@@ -1,0 +1,192 @@
+clear
+Table1=[];Table2=[];Table3=[];Newtable1=[];Newtable2=[];
+Ans=1;
+while Ans==1
+    clc
+    disp('1.Add a row to table 1');
+    disp('2.Add a row to table 2');
+    disp('3.Add a row to table 3');
+    disp('4.Load a table');
+    disp('5.Save a table');
+    disp('6.Display a table');
+    disp('7.Compute a table  for the ordered books, price, price after discount of each customer');
+    disp('8.Compute a table  for extra discount to all ordered books based on Total amount of all previous orders, Total books number of all previous orders, Total amount of all current orders, Total books number of current orders');
+    disp('9.Compute a table showing how many books are ordered and their total price without any discount');
+    disp('10.Exit Program');
+    Num=input('Please choose from the menu:');
+    if Num==1
+        clc
+        Table1=input('Please enter Book IDs and Prices:');
+        Table1=Add_rowT1(Table1);
+        cont=input('Please press any letter to continue:','s');
+    elseif Num==2
+        clc
+        Table2=input('Please enter Customer IDs, Total amount of all previous orders, and Total books number of all previous orders:');
+        Table2=Add_rowT2(Table2);
+        cont=input('Please press any letter to continue:','s');
+    elseif Num==3
+        clc
+        Table3=input('Please enter Customer ID, Book ID, and discount (%):');
+        Table3=Add_rowT3(Table3);
+        cont=input('Please press any letter to continue:','s');
+    elseif Num==4
+        disp('A.Load Table 1');
+        disp('B.Load Table 2');
+        disp('C.Load Table 3');
+        L=input('Please choose from sub-menu:','s');
+        if L=='A'
+            fprintf('Table 1\n');
+           Table1=Load_table;
+        elseif L=='B'
+            fprintf('Table 2\n');
+            Table2=Load_table;
+        elseif L=='C'
+            fprintf('Table 3\n');
+            Table3=Load_table;
+        end
+        cont=input('Please press any letter to continue:','s');
+    elseif Num==5
+        clc
+        disp('A.Table 1');
+        disp('B.Table 2');
+        disp('C.Table 3');
+        S=input('Please choose the table you want to save:','s');
+        if S=='A'
+            save_table(Table1);
+            fprintf('Table 1 saved\n');
+        elseif S=='B'
+            save_table(Table2);
+            fprintf('Table 2 saved\n');
+        elseif S=='C'
+            save_table(Table3);
+            fprintf('Table 3 saved\n');
+        end
+        cont=input('Please press any letter to continue:','s');
+    elseif Num==6
+        disp('A.Display Table 1');
+        disp('B.Display Table 2');
+        disp('C.Display Table 3');
+        D=input('Please enter the table you want to display:','s');
+        if D=='A'
+            disp('Table 1');
+            Table1=Display_table;
+        elseif D=='B'
+            disp('Table 2');
+            Table2=Display_table;
+        elseif D=='C'
+            disp('Table 3');
+            Table3=Display_table;
+        end
+        cont=input('Please press any letter to continue:','s');
+    elseif Num==7
+        clc
+        fprintf('Table 1 ');
+        Table1=check_empty(Table1);
+        fprintf('Table 3 ');
+        Table3=check_empty(Table3);
+        Newtable1(:,1)=Table3(:,1);
+        Newtable1(:,2)=Table3(:,2);
+        k=1;
+        for i=1:length(Table1)
+            for j=1:length(Table3)
+                if Table1(i,1)==Table3(j,2)
+                    Newtable1(k,3)=Table1(i,2);
+                    k=k+1;
+                end
+            end
+        end
+        Newtable1(:,4)=Newtable1(:,3)-(Newtable1(:,3).*Table3(:,3)./100);
+       compute_table(Newtable1);
+       cont=input('Please press any letter to continue:','s');
+    elseif Num==8
+        clc
+        fprintf('Table 1 ');
+        Table1=check_empty(Table1);
+        fprintf('Table 2 ');
+        Table2=check_empty(Table2);
+        fprintf('Table 3 ');
+        Table3=check_empty(Table3);
+        Newtable2(:,1)=Table3(:,1);
+        Newtable2(:,2)=Table2(:,2);
+        disp(Newtable2);
+        C=0;
+        for i=1:length(Newtable2)
+            for j=i+1:length(Newtable2)
+                if Newtable2(i,1)==Newtable2(j,1)
+                    Newtable2(i,3)=Table1(i,2)+Table1(j,2);
+                     break;
+                else
+                    Newtable2(i,3)=Table1(i,2);
+                end
+            end
+        end
+        
+        for i=1:length(Newtable2)
+            if any(Newtable2(:,3)>=1000)==1
+    Newtable2(i,4)=75;
+elseif any(Newtable2(:,3)>=500)==1
+    Newtable2(i,4)=50;
+elseif any(Newtable2(:,3)>=250)==1
+    Newtable2(i,4)=25;
+else
+    Newtable2(i,4)=0;
+end
+end
+        ex_disc(Newtable2);
+        compute_table2(Newtable2);  
+        cont=input('Please press any letter to continue:','s');
+    elseif Num==9
+        clc
+        fprintf('Table 1 ');
+        Table1=check_empty(Table1);
+        fprintf('Table 3 ');
+        Table3=check_empty(Table3);
+        Newtable3(:,1)=Table3(:,2);
+        c=0;
+        for i=1:length(Newtable3)
+            for j=i+1:length(Newtable3)
+                if Newtable3(i,1)==Newtable3(j,1)
+                    c=c+1;
+                    break;
+                end
+            end
+            Newtable3(i,2)=c;
+        end
+        for i=1:length(Newtable3)
+            Newtable3(i,3)=Newtable3(i,2).*Table1(i,2);
+        end
+        compute_table3(Newtable3);
+         cont=input('Please press any letter to continue:','s');
+    elseif Num==10
+        clc
+        EXIT='y';
+EXIT=input('Are you sure you want to exit the program y/n?','s');
+if EXIT=='y'
+    disp('Thanks for using this program');
+    Ans=0;
+else
+    cont=input('Please press any button to continue:','s');
+end
+    end
+end
+
+
+
+       function exit_program 
+%to exit the program
+EXIT='y';
+EXIT=input('Are you sure you want to exit the program y/n?','s');
+if EXIT=='y'
+    disp('Thanks for using this progrm');
+    Ans=0;
+else
+    cont=input('Please press any button to continue','s');
+end
+end
+
+        
+        
+        
+        
+        
+        
